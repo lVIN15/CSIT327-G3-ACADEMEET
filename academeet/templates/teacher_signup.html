@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create a Teacher Account - Academeet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/teacher_registration.css' %}">
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'role_selection' %}" class="back-button">← Back</a>
+    
+    <div class="registration-container">
+        <!-- Left Side - Form -->
+        <div class="form-section">
+            <h1>Teacher Registration</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Full Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="teacher_id" name="teacher_id" placeholder="Teacher ID" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" class="form-control" id="contact_number" name="contact_number" placeholder="Contact Number" required>
+                </div>
+                
+                <div class="select-group">
+                    <select class="form-control" id="department" name="department" required>
+                        <option value="">Select Department</option>
+                        <option value="BSIT_BSCS">BSIT / BSCS</option>
+                        <option value="BS_Nursing">BS Nursing</option>
+                        <option value="BS_CE">BS Civil Engineering</option>
+                        <option value="BS_Arch">BS Architecture</option>
+                        <option value="BS_Accountancy">BS Accountancy</option>
+                        <option value="BS_Psychology">BS Psychology</option>
+                        <option value="BS_Criminology">BS Criminology</option>
+                        <option value="BS_Education">BS Education</option>
+                        <option value="BS_Hospitality">BS Hospitality Management</option>
+                        <option value="BS_Tourism">BS Tourism</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password1" name="password1" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm Password" required>
+                </div>
+
+                <button type="submit" class="register-btn">Register</button>
+            </form>
+        </div>
+
+        <!-- Right Side - Branding -->
+        <div class="branding-section">
+            <img src="{% static 'core/images/academeet-logo.png' %}" alt="Academeet Logo">
+            <h2>Create Teacher Account</h2>
+            <p>Join Academeet as a teacher</p>
+            <p>Already have an account? <a href="{% url 'role_selection' %}" class="role-link">Go to role selection</a></p>
+        </div>
+    </div>
+{% endblock %}

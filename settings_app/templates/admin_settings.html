@@ -1,0 +1,262 @@
+{% extends "settings_base.html" %}
+{% load static %}
+
+{% block title %}System Administrator Settings{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'admin_settings.css' %}?v=3.1">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block settings_content %}
+    <header>
+        <h3>Faculty Schedule Management</h3>
+        <p class="subtitle">View and monitor professor schedules in a weekly format.</p>
+    </header>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="settings-grid">
+        
+        <div class="settings-card large-card">
+
+            <div id="calendarError" class="error-banner" style="display:none;">
+                <i class='bx bx-error-circle'></i> Unable to load schedules. Please try again later.
+            </div>
+
+            <div class="calendar-controls">
+                <label for="professorFilter"><strong>Filter by Professor:</strong></label>
+                <select id="professorFilter" {% if not teachers %}disabled{% endif %}>
+                    {% if not teachers %}
+                        <option value="">No professors found</option>
+                    {% else %}
+                        <option value="" selected disabled>Select a Professor...</option>
+                        {% for teacher in teachers %}
+                            <option value="{{ teacher.user.id }}">{{ teacher.user.last_name }}, {{ teacher.user.first_name }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+
+            <div class="calendar-wrapper">
+                {% if not teachers %}
+                    <div class="empty-state-calendar">
+                        <i class='bx bx-user-x' style="font-size: 48px; margin-bottom: 10px;"></i>
+                        <p>No professors are currently registered in the system.</p>
+                    </div>
+                {% else %}
+                    <table class="admin-calendar">
+                        <thead>
+                            <tr>
+                                <th class="time-col">Time</th>
+                                {% for day in days %}
+                                    <th>{{ day }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for time in time_slots %}
+                            <tr>
+                                <td class="time-col">{{ time }}</td>
+                                <td data-day="Monday" data-time="{{ time }}"></td>
+                                <td data-day="Tuesday" data-time="{{ time }}"></td>
+                                <td data-day="Wednesday" data-time="{{ time }}"></td>
+                                <td data-day="Thursday" data-time="{{ time }}"></td>
+                                <td data-day="Friday" data-time="{{ time }}"></td>
+                                <td data-day="Saturday" data-time="{{ time }}"></td>
+                                <td data-day="Sunday" data-time="{{ time }}"></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div id="initialInstruction" class="empty-state-calendar">
+                        Please select a professor above to view their schedule.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="user-lists-container">
+            <div class="settings-card">
+                <h4>Teachers ({{ teachers|length }})</h4>
+                <ul class="user-list user-list-scroll">
+                    {% for teacher in teachers %}
+                        <li>
+                            <a href="{% url 'view_user_profile' teacher.user.id %}">
+                                {{ teacher.user.first_name }} {{ teacher.user.last_name }}
+                            </a>
+                            <span class="user-id">ID: {{ teacher.user.id }}</span>
+                        </li>
+                    {% empty %}
+                        <li class="empty-list">No teachers found.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="settings-card" style="margin-top: 30px;">
+                <h4>Students ({{ students|length }})</h4>
+                <ul class="user-list user-list-scroll">
+                    {% for student in students %}
+                        <li>
+                            <a href="{% url 'view_user_profile' student.user.id %}">
+                                {{ student.user.email }}
+                            </a>
+                            <span class="user-id">ID: {{ student.user.id }}</span>
+                        </li>
+                    {% empty %}
+                        <li class="empty-list">No students found.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="scheduleModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">Schedule Details</div>
+            <div class="modal-body">
+                <p><strong>Subject:</strong> <span id="modalSubject"></span></p>
+                <p><strong>Room:</strong> <span id="modalRoom"></span></p>
+                <p><strong>Time:</strong> <span id="modalTime"></span></p>
+                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                <input type="hidden" id="modalScheduleId">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal()">Close</button>
+                <button class="btn-delete-modal" onclick="deleteSchedule()">Delete</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const profFilter = document.getElementById('professorFilter');
+    const calendarTable = document.querySelector('.admin-calendar');
+    const instructionMsg = document.getElementById('initialInstruction');
+    const errorBanner = document.getElementById('calendarError');
+    const modal = document.getElementById('scheduleModal');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if(calendarTable) calendarTable.style.display = 'none';
+
+        if (profFilter) {
+            profFilter.addEventListener('change', function() {
+                loadSchedule(this.value);
+            });
+        }
+    });
+
+    function loadSchedule(professorId) {
+        if (!professorId) return;
+
+        // Reset UI
+        if(calendarTable) calendarTable.style.display = 'table';
+        if(instructionMsg) instructionMsg.style.display = 'none';
+        if(errorBanner) errorBanner.style.display = 'none';
+        
+        document.querySelectorAll('.schedule-block').forEach(el => el.remove());
+
+        const apiUrl = "{% url 'get_professor_schedule_admin' %}";
+        
+        fetch(`${apiUrl}?professor_id=${professorId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.schedules) {
+                    renderSchedule(data.schedules);
+                } else {
+                    console.error("API Error:", data);
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                if(errorBanner) errorBanner.style.display = 'flex';
+                if(calendarTable) calendarTable.style.display = 'none';
+            });
+    }
+
+    function renderSchedule(schedules) {
+        schedules.forEach(sched => {
+            const selector = `td[data-day="${sched.day}"][data-time="${sched.start_time}"]`;
+            const cell = document.querySelector(selector);
+
+            if (cell) {
+                const block = document.createElement('div');
+                const statusLower = (sched.status || '').toLowerCase();
+                let statusClass = 'status-Meeting';
+
+                if (statusLower === 'available') statusClass = 'status-Available';
+                else if (statusLower === 'in class') statusClass = 'status-Class';
+
+                block.className = `schedule-block ${statusClass}`;
+                block.style.cursor = 'pointer'; 
+                block.innerHTML = `
+                    <strong>${sched.subject_code || 'Available'}</strong>
+                    <span>${sched.room || ''}</span>
+                    <span>${sched.display_start} - ${sched.display_end}</span>
+                `;
+                
+                // Open Modal on Click
+                block.addEventListener('click', () => openModal(sched));
+                cell.appendChild(block);
+            }
+        });
+    }
+
+    // --- MODAL FUNCTIONS ---
+    function openModal(sched) {
+        document.getElementById('modalSubject').innerText = sched.subject_code || 'Available';
+        document.getElementById('modalRoom').innerText = sched.room || 'N/A';
+        document.getElementById('modalTime').innerText = `${sched.day}, ${sched.display_start} - ${sched.display_end}`;
+        document.getElementById('modalStatus').innerText = sched.status;
+        
+        // This requires 'sched.id' to be returned from your views.py API
+        document.getElementById('modalScheduleId').value = sched.id; 
+        
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    function deleteSchedule() {
+        const scheduleId = document.getElementById('modalScheduleId').value;
+        if(!scheduleId) return;
+
+        if(!confirm("Are you sure you want to delete this schedule?")) return;
+
+        const deleteUrl = "{% url 'delete_schedule_api' %}";
+        
+        fetch(deleteUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ schedule_id: scheduleId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                closeModal();
+                loadSchedule(profFilter.value); // Refresh
+            } else {
+                alert("Error deleting schedule: " + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => console.error(err));
+    }
+    
+    // Close modal if clicking outside
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+{% endblock %}

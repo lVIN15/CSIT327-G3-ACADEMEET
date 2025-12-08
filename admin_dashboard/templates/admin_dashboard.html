@@ -1,0 +1,221 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Academeet</title>
+    <link rel="stylesheet" href="{% static 'admin_dashboard.css' %}">
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo-section">
+        <div class="logo-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <h1>Academeet</h1>
+    </div>
+
+    <div class="profile-and-settings">
+        <span class="user-name-header">Welcome, {{ request.user.username }}</span> 
+        
+        <div class="settings-icon" id="settingsIcon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C13.1 2 14 2.9 14 4v2h2c1.1 0 2 .9 2 2v2h2c1.1 0 2 .9 2 2v2h-2v2c0 1.1-.9 2-2 2h-2v2c0 1.1-.9 2-2 2h-2v-2H8c-1.1 0-2-.9-2-2v-2H4v-2c0-1.1.9-2 2-2h2V8c0-1.1.9-2 2-2h2V4c0-1.1.9-2 2-2z"/>
+            </svg>
+        </div>
+    </div>
+</header>
+
+<div class="settings-sidebar" id="settingsSidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-profile-info">
+            
+            
+            
+           <div class="profile-icon">
+    {% if user_profile.profile_picture %}
+        <img src="{{ user_profile.profile_picture.url }}"
+             alt="Profile Pic"
+             style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+    {% else %}
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 
+                     10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 
+                     3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 
+                     1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 
+                     4-3.08 6-3.08 1.99 0 5.97 1.09 6 
+                     3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+        </svg>
+    {% endif %}
+</div>
+
+            <span class="user-name">Logged in as: {{ request.user.username }}</span>
+        </div>
+        
+        <div class="settings-title-and-close">
+
+
+
+            
+            <h2>Settings</h2>
+            <button class="close-btn" id="closeSidebar">✕</button>
+        </div>
+    </div>
+
+    
+    <ul class="sidebar-menu">
+        <li><a href="{% url 'general_settings' %}">General Settings</a></li>
+        <li><a href="{% url 'admin_settings' %}">Admin Settings</a></li>
+       
+   <div class="sidebar-footer">
+        <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="logout-link">
+                Logout
+            </button>
+        </form>
+    </div>
+</div>
+
+<main class="dashboard">
+    <div class="dashboard-left">
+        <div class="calendar-section">
+            <h3 class="calendar-title">Calendar</h3>
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <button id="prevMonth">◀</button>
+                    <span id="monthYear">November 2025</span>
+                    <button id="nextMonth">▶</button>
+                </div>
+                <table class="month-calendar">
+                    <thead>
+                        <tr>
+                            <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendarBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-right">
+        <h2>Admin Dashboard</h2>
+        <p>Welcome, {{ request.user.username }}</p>
+
+        <div class="filter-section">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="active">Active</button>
+            <button class="filter-tab" data-filter="deactivated">Deactivated</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    {% for user in users %}
+                    <tr class="user-row {% if user.is_active %}active-user{% else %}deactivated-user{% endif %}">
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.email }}</td>
+                        
+                        {# Display the role from the UserProfile #}
+                        <td>
+                            {% if user.userprofile %}
+                                {{user.userprofile.get_role_display }}
+                            {% else %}
+                                
+                                {# CHANGED from '—' to standard '-' #}
+                                -
+                            {% endif %}
+                        </td>
+                        
+                        <td class="status-{% if user.is_active %}active{% else %}deactivated{% endif %}">
+                            {{ user.is_active|yesno:"Active,Deactivated" }}
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'toggle_user_status' user.id %}">
+                                {% csrf_token %}
+                                {% if user.is_active %}
+                                    <button type="submit" class="action-btn deactivate">Deactivate</button>
+                                {% else %}
+                                    <button type="submit" class="action-btn activate">Activate</button>
+                                {% endif %}
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Filtering Logic (Original) ---
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const userRows = document.querySelectorAll('.user-row');
+
+        function filterUsers(filterStatus) {
+            userRows.forEach(row => {
+                const matchesFilter = row.classList.contains(filterStatus + '-user');
+                if (filterStatus === 'all' || matchesFilter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        filterTabs.forEach(button => {
+            button.addEventListener('click', function() {
+                const filterStatus = this.getAttribute('data-filter');
+                filterTabs.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                filterUsers(filterStatus);
+            });
+        });
+
+        filterUsers('all'); 
+        
+        // --- Sidebar Logic (Updated) ---
+        const settingsIcon = document.getElementById('settingsIcon');
+        const settingsSidebar = document.getElementById('settingsSidebar');
+        const closeSidebarBtn = document.getElementById('closeSidebar');
+
+        function closeSidebar() {
+            settingsSidebar.classList.remove('open');
+        }
+
+        settingsIcon.addEventListener('click', () => {
+            settingsSidebar.classList.toggle('open');
+        });
+
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+
+        // Logic to close sidebar when clicking outside
+        document.addEventListener('click', (event) => {
+            const isClickInsideSidebar = settingsSidebar.contains(event.target);
+            const isClickOnIcon = settingsIcon.contains(event.target);
+
+            if (settingsSidebar.classList.contains('open') && !isClickInsideSidebar && !isClickOnIcon) {
+                closeSidebar();
+            }
+        });
+    });
+</script>
+
+<script src="{% static 'core/js/calendar.js' %}"></script>
+
+</body>
+</html>

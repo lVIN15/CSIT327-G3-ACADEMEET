@@ -1,0 +1,264 @@
+html, body {
+    width: 100%;
+    height: 100%; 
+    margin: 0;
+    padding: 0;
+    
+    /* General styles */
+    font-family: 'Poppins', sans-serif;
+    background-color: white; 
+    text-align: left;
+}
+
+:root {
+    --maroon-dark: #800000;
+    --gold: #f5b800;
+    --bg-light: #f7f7f7;
+    --text-dark: #333;
+}
+
+.settings-container {
+    display: flex;
+    background: white;
+    overflow: hidden;
+    height: 100%; 
+    width: 100%; 
+}
+
+.settings-nav {
+    flex: 0 0 280px; 
+    background-color: var(--maroon-dark);
+    color: white;
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+    box-sizing: border-box; /* Padding is included in the 100% height */
+}
+
+.settings-nav h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    padding: 0 25px 15px;
+    margin: 0 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.settings-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; 
+}
+
+.settings-nav li a {
+    display: block;
+    padding: 15px 25px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.settings-nav li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Active link style */
+.settings-nav li a.active {
+    background-color: var(--gold);
+    color: var(--maroon-dark);
+    font-weight: 700;
+    border-right: 5px solid #fff;
+}
+
+/* Back Link Style */
+.back-link {
+    display: block;
+    margin-top: 20px;
+    padding: 15px 25px;
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #fff;
+}
+
+
+/* --- RIGHT PANEL: Content Area --- */
+.settings-content {
+    flex-grow: 1;
+    padding: 30px;
+    overflow-y: auto; 
+    
+    /* CRITICAL: Ensure the content area also fills the available height */
+    height: 100%; 
+    box-sizing: border-box; /* Padding is included in the 100% height */
+}
+
+.settings-content h3 {
+    color: var(--maroon-dark);
+    font-size: 2rem;
+    border-bottom: 3px solid var(--gold);
+    padding-bottom: 10px;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+/* Card Style for content blocks */
+.settings-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.settings-card h4 {
+    color: var(--maroon-dark);
+    margin-top: 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+
+/* ----------------------------------------------------------------------
+/* 3. FORM STYLING: Account Information Settings 
+/* ---------------------------------------------------------------------- */
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column; 
+    gap: 5px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group select {
+    padding: 10px;
+    border: 1px solid #c5cace;
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box; 
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--gold);
+    outline: none;
+}
+
+/* Button Styles */
+.btn-save, .btn-secondary, .btn-assign {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    text-decoration: none; 
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-save {
+    background-color: var(--maroon-dark);
+    color: rgb(227, 227, 227);
+    margin-top: 10px;
+}
+
+.btn-save:hover {
+    background-color: #6a0000;
+}
+
+.btn-secondary {
+    background-color: #ccc;
+    color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+    background-color: #aaa;
+}
+
+
+/* ----------------------------------------------------------------------
+/* 4. TABLE STYLING: User Role Management 
+/* ---------------------------------------------------------------------- */
+
+.settings-card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.95rem;
+}
+
+.settings-card th, 
+.settings-card td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.settings-card thead th {
+    background-color: var(--maroon-dark);
+    color: white;
+    font-weight: 700;
+}
+
+.settings-card tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+/* Styling for the role assignment form within the table */
+.settings-card td form {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+
+.settings-card td select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.btn-assign {
+    background-color: var(--gold);
+    color: var(--maroon-dark);
+    padding: 8px 15px;
+    font-size: 0.9rem;
+}
+
+.btn-assign:hover {
+    background-color: #e5a700;
+}
+
+.btn-view-profile {
+    color: var(--maroon-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+.btn-view-profile:hover {
+    text-decoration: underline;
+}
+
+/* Profile Picture in form */
+.form-group img {
+    border: 2px solid var(--maroon-dark);
+    object-fit: cover;
+    margin-right: 10px;
+}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Choose Your Role - Academeet{% endblock %}
+
+{% block content %}
+<div class="bg-shape"></div>
+<div class="bg-shape"></div>
+<div class="bg-shape"></div>
+
+<div class="container">
+    <div class="logo">
+        <div class="logo-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                <path d="M9 12l2 2 4-4"/>
+            </svg>
+        </div>
+        <h1>Welcome to Academeet</h1>
+        <p class="subtitle">Choose your role to continue</p>
+    </div>
+
+    <div class="role-selection">
+        <div class="role-options">
+            <a href="{% url 'student_login' %}" class="role-card student-card">
+                <div class="role-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <h3>Student</h3>
+                <p>Access your student account and manage your academic journey</p>
+            </a>
+
+            <a href="{% url 'teacher_login' %}" class="role-card teacher-card">
+                <div class="role-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                </div>
+                <h3>Teacher</h3>
+                <p>Access your teacher account and manage your classes</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="register-link">
+        <p>Don't have an account? <a href="{% url 'student_signup' %}">Register as Student</a> or <a href="{% url 'teacher_signup' %}">Register as Teacher</a></p>
+    </div>
+</div>
+{% endblock %}

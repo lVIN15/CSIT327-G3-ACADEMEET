@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile of {{ target_user.username }}</title>
+    
+    <link rel="stylesheet" href="{% static 'user_profile.css' %}">
+    
+</head>
+<body>
+
+<div class="settings-container">
+    
+    <nav class="settings-nav">
+        <h2>Settings Categories</h2>
+        <ul>
+            <li>
+                <a href="{% url 'general_settings' %}" class="{% if request.resolver_match.url_name == 'general_settings' %}active{% endif %}">
+                    General Settings
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin_settings' %}" class="{% if request.resolver_match.url_name == 'admin_settings' %}active{% endif %}">
+                    Admin Settings
+                </a>
+            </li>
+        </ul>
+        
+        <a href="{% url 'admin_dashboard' %}" class="back-link">
+            &larr; Back to Dashboard
+        </a>
+    </nav>
+    
+    <main class="settings-content">
+        
+        <h3>User Profile: {{ target_user.email }}</h3>
+        <p class="subtitle">Detailed information and system role for this user.</p>
+
+        <div class="profile-main-card settings-card">
+
+            <div class="profile-picture-container">
+                {% if user_profile and user_profile.profile_picture and user_profile.profile_picture.url %}
+                    <img src="{{ user_profile.profile_picture.url }}"
+                    alt="{{ target_user.username }} Profile Picture"
+                    class="profile-pic-lg">
+                {% else %}
+                    <div class="profile-pic-lg profile-pic-placeholder">
+                        <span>{{ target_user.first_name|default:"U"|slice:":1" }}</span>
+                    </div>
+                {% endif %}
+                
+                <div class="profile-header-text">
+                    <h1>{{ target_user.first_name }} {{ target_user.last_name|default:"" }}</h1>
+                    <p class="role-tag role-{{ user_profile.role|lower }}">{{ user_profile.get_role_display }}</p>
+                </div>
+            </div>
+
+            <hr class="profile-divider">
+
+            <div class="profile-details-section">
+                <h4>Personal & Account Details</h4>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Username:</span>
+                    <span class="detail-value">{{ target_user.username }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{ target_user.email }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">User ID:</span>
+                    <span class="detail-value">{{ target_user.id }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Joined Date:</span>
+                    <span class="detail-value">{{ target_user.date_joined|date:"F j, Y" }}</span>
+                </div>
+            </div>
+            
+            <hr class="profile-divider">
+
+            <a href="{% url 'general_settings' %}" class="btn-secondary">&larr; Back to Settings</a>
+        </div>
+        
+    </main>
+</div>
+
+</body>
+</html>

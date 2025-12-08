@@ -1,0 +1,344 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings | {{ user.username }}</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="{% static 'settings.css' %}">
+    <style>
+        /* Define primary colors based on Django's admin theme for consistency */
+        :root {
+            --primary-color: #4F46E5; /* Indigo 600 */
+            --primary-dark: #4338CA; /* Indigo 700 */
+            --success-color: #10B981; /* Green 500 */
+            --warning-color: #EF4444; /* Red 500 */
+        }
+        .text-primary { color: var(--primary-color); }
+        .bg-primary { background-color: var(--primary-color); }
+        .hover\:bg-primary-dark:hover { background-color: var(--primary-dark); } 
+        .focus\:ring-primary:focus { --tw-ring-color: var(--primary-color); }
+
+        /* Custom styling for the strength checklist indicators */
+        .text-success { color: var(--success-color); }
+        .text-warning { color: var(--warning-color); }
+        
+        /* Custom styles for the toggle switch */
+        .peer:checked ~ .bg-gray-200.peer-checked\:after\:translate-x-full {
+            background-color: var(--primary-color);
+        }
+        .peer-focus\:ring-primary\/50:focus {
+            --tw-ring-color: rgba(79, 70, 229, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans antialiased p-4 sm:p-8">
+
+   <div class="max-w-4xl mx-auto space-y-8">
+    
+    <a href="{% url 'student_dashboard' %}" 
+       class="back-link inline-flex items-center text-sm font-semibold text-gray-700 hover:text-red-700 
+              bg-gray-100 hover:bg-gray-200 transition duration-150 py-2 px-3 rounded-lg shadow-sm">
+        <svg class="w-4 h-4 mr-1 stroke-current" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Dashboard
+    </a>
+    
+        <header class="text-center">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Account Preferences & Security</h1>
+            <p class="mt-2 text-gray-500">Manage your profile, password, and notification settings.</p>
+        </header>
+
+        <!-- Messages Section (Displays success/error messages from Django) -->
+        {% if messages %}
+            <div class="space-y-3">
+                {% for message in messages %}
+                    <div class="p-4 rounded-xl font-medium text-sm 
+                        {% if message.tags == 'success' %}bg-green-100 text-green-800 border border-green-300{% elif message.tags == 'error' %}bg-red-100 text-red-800 border border-red-300{% else %}bg-blue-100 text-blue-800 border border-blue-300{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Navigation Tab -->
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <button id="tab-account" onclick="showTab('account')" 
+                    class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition duration-150">
+                    Account Settings
+                </button>
+                <button id="tab-password" onclick="showTab('password')" 
+                    class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition duration-150">
+                    Password Update
+                </button>
+            </nav>
+        </div>
+
+        <!-- --------------------------------------- -->
+        <!-- Tab Content Containers -->
+        <!-- --------------------------------------- -->
+        
+        <!-- 1. Account Settings Tab (Notifications) -->
+        <div id="content-account" class="tab-content card bg-white p-6 rounded-xl border border-gray-200 shadow-lg space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-red-500 pb-2">Notification Preferences</h2>
+
+            <form method="POST" id="preference-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_preferences">
+                <!-- Include hidden fields from the form for potential non-field errors/data -->
+                {{ notification_form.as_hidden }}
+
+                <!-- Email Notifications Toggle -->
+                <div class="flex items-center justify-between border-b py-4">
+                    <div class="flex flex-col">
+                        <span class="text-base font-medium text-gray-900">Email Notifications</span>
+                        <span class="text-sm text-gray-500">
+                            Receive alerts and updates via your registered email address (<span class="font-mono text-gray-700">{{ user.email|default:"Not set" }}</span>).
+                        </span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="{{ notification_form.email_notifications.name }}" id="{{ notification_form.email_notifications.id_for_label }}" 
+                                class="sr-only peer" 
+                                {% if user_profile.email_notifications %}checked{% endif %}
+                                onchange="enableSave('preference-form-save')">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                    </label>
+                </div>
+
+                <!-- In-App Notifications Toggle -->
+                <div class="flex items-center justify-between py-4">
+                    <div class="flex flex-col">
+                        <span class="text-base font-medium text-gray-900">In-App Alerts</span>
+                        <span class="text-sm text-gray-500">Show important messages and schedule reminders directly within the application.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="{{ notification_form.in_app_notifications.name }}" id="{{ notification_form.in_app_notifications.id_for_label }}" 
+                                class="sr-only peer" 
+                                {% if user_profile.in_app_notifications %}checked{% endif %}
+                                onchange="enableSave('preference-form-save')">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                    </label>
+                </div>
+
+                <!-- Save Button (Disabled until change is made) -->
+                <div class="pt-4 flex justify-end">
+                    <button type="submit" id="preference-form-save" disabled
+                        class="px-5 py-2 border border-transparent text-sm font-medium rounded-lg shadow-md text-white bg-gray-400 cursor-not-allowed transition duration-150">
+                        Save Preferences
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 2. Password Update Tab -->
+        <div id="content-password" class="tab-content card bg-white p-6 rounded-xl border border-gray-200 shadow-lg space-y-6 hidden">
+            <h2 class="text-2xl font-bold text-red-500 border-b-2 border-red-500 pb-2">Security: Update Password</h2>
+            
+            <form method="POST" id="password-form" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_password">
+                <!-- Include hidden fields from the form for potential non-field errors/data -->
+                {{ password_form.as_hidden }}
+
+                <!-- Current Password Field -->
+                <div>
+                    <label for="{{ password_form.old_password.id_for_label }}" class="block text-sm font-medium text-gray-700">Current Password</label>
+                    <input type="password" id="{{ password_form.old_password.id_for_label }}" name="{{ password_form.old_password.name }}" required
+                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 p-2"
+                        placeholder="Required for security confirmation" 
+                        oninput="validatePasswordFields()">
+                    <p class="text-xs text-gray-500 mt-1">Required for security confirmation</p>
+                    <!-- Display field errors for old_password -->
+                    {% if password_form.old_password.errors %}
+                        <p class="text-sm text-red-600 mt-1">{{ password_form.old_password.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- New Password Field -->
+                <div>
+                    <label for="{{ password_form.new_password1.id_for_label }}" class="block text-sm font-medium text-gray-700">New Password</label>
+                    <input type="password" id="{{ password_form.new_password1.id_for_label }}" name="{{ password_form.new_password1.name }}" required
+                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 p-2"
+                        placeholder="8+ chars, number, and symbol"
+                        oninput="validatePasswordFields()">
+                    <div id="password-strength-check" class="mt-2 text-sm space-y-1">
+                        <p id="len-check" class="flex items-center text-warning">
+                            <svg class="w-4 h-4 mr-1 transition duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>At least 8 characters
+                        </p>
+                        <p id="num-check" class="flex items-center text-warning">
+                            <svg class="w-4 h-4 mr-1 transition duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>Contains a number (0-9)
+                        </p>
+                        <p id="sym-check" class="flex items-center text-warning">
+                            <svg class="w-4 h-4 mr-1 transition duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>Contains a symbol (!@#$...)
+                        </p>
+                    </div>
+                    <!-- Display field errors for new_password1 -->
+                    {% if password_form.new_password1.errors %}
+                        <p class="text-sm text-red-600 mt-1">{{ password_form.new_password1.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- New Password Confirmation Field (Required by PasswordChangeForm but hidden in the mockup logic) -->
+                <!-- We still need this field for Django's validation, but we can hide it and let the client-side/server-side logic handle the single new password input -->
+                <div class="hidden">
+                    <label for="{{ password_form.new_password2.id_for_label }}" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <input type="password" id="{{ password_form.new_password2.id_for_label }}" name="{{ password_form.new_password2.name }}" 
+                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 p-2"
+                        value="{{ password_form.new_password1.value|default_if_none:'' }}" 
+                        oninput="this.value = document.getElementById('{{ password_form.new_password1.id_for_label }}').value">
+                    <!-- Display field errors for new_password2 (often just a confirmation error) -->
+                    {% if password_form.new_password2.errors %}
+                        <p class="text-sm text-red-600 mt-1">{{ password_form.new_password2.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Save Button (Disabled until valid) -->
+                <div class="pt-4 flex justify-end">
+                    <button type="submit" id="password-form-save" disabled
+                        class="px-5 py-2 border border-transparent text-sm font-medium rounded-lg shadow-md text-white bg-gray-400 cursor-not-allowed transition duration-150">
+                        Update Password
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+
+    <script>
+        // Store current tab state
+        let currentTab = 'account';
+
+        // SVG Path definitions
+        const SVG_CHECK = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+        const SVG_X = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+
+        /**
+         * Toggles the visibility of the settings tabs.
+         * @param {string} tabName - The name of the tab to show ('account' or 'password').
+         */
+        function showTab(tabName) {
+            currentTab = tabName;
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-primary', 'text-primary');
+                btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            });
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            activeBtn.classList.add('border-primary', 'text-primary');
+            activeBtn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+
+            // Re-validate password fields in case the user navigates back to the tab
+            if (tabName === 'password') {
+                validatePasswordFields();
+            }
+        }
+
+        /**
+         * Enables the save button for the preferences form when a change is detected.
+         * @param {string} buttonId - The ID of the button to enable.
+         */
+        function enableSave(buttonId) {
+            const button = document.getElementById(buttonId);
+            if (button.disabled) {
+                button.disabled = false;
+                button.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                // Use primary color for the notification save button
+                button.classList.add('bg-primary', 'hover:bg-primary-dark');
+            }
+        }
+
+        /**
+         * Validates password strength and enables the password update button.
+         * Also syncs the new_password1 value to the new_password2 hidden field.
+         */
+        function validatePasswordFields() {
+            const currentPassword = document.getElementById('id_old_password').value;
+            const newPasswordInput = document.getElementById('id_new_password1');
+            const newPassword = newPasswordInput.value;
+            const confirmPasswordInput = document.getElementById('id_new_password2');
+            const saveButton = document.getElementById('password-form-save');
+            
+            // Sync the new password to the hidden confirmation field for Django's validation
+            if (confirmPasswordInput) {
+                confirmPasswordInput.value = newPassword;
+            }
+
+            // Password Strength Criteria
+            const checks = {
+                len: { element: document.getElementById('len-check'), valid: newPassword.length >= 8 },
+                num: { element: document.getElementById('num-check'), valid: /\d/.test(newPassword) },
+                sym: { element: document.getElementById('sym-check'), valid: /[^A-Za-z0-9]/.test(newPassword) }
+            };
+
+            let strengthValid = true;
+            
+            // Check Strength Criteria and update visual indicators
+            for (const key in checks) {
+                const check = checks[key];
+                const svg = check.element.querySelector('svg');
+                
+                check.element.classList.remove('text-success', 'text-warning');
+
+                if (check.valid) {
+                    svg.innerHTML = SVG_CHECK; // Set checkmark path
+                    check.element.classList.add('text-success');
+                } else {
+                    svg.innerHTML = SVG_X; // Set X path
+                    check.element.classList.add('text-warning');
+                    strengthValid = false; 
+                }
+            }
+
+            // Check if all fields are non-empty and strength is valid
+            const allValid = currentPassword.length > 0 && newPassword.length > 0 && strengthValid;
+
+            // Enable or disable the save button
+            saveButton.disabled = !allValid;
+            if (allValid) {
+                saveButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                // Use red color for the security button as indicated by the mockup style
+                saveButton.classList.add('bg-red-500', 'hover:bg-red-700'); 
+            } else {
+                saveButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                saveButton.classList.remove('bg-red-500', 'hover:bg-red-700');
+            }
+        }
+
+        // Initialize the page on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if the current URL has a hash or query param to indicate an active tab
+            // This is useful if the user submitted a form and the server redirected them back to a specific tab
+            const urlParams = new URLSearchParams(window.location.search);
+            // Default to 'account', or check the 'tab' query parameter
+            const initialTab = urlParams.get('tab') || 'account';
+
+            showTab(initialTab); // Load to the default or specified tab
+            
+            // Hook up change listeners to preference form to enable button
+            document.getElementById('preference-form').addEventListener('change', () => {
+                enableSave('preference-form-save');
+            });
+            
+            // Initial check for password fields
+            validatePasswordFields();
+        });
+    </script>
+
+</body>
+</html>

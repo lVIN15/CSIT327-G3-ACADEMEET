@@ -1,0 +1,129 @@
+/* Status Selector Styles */
+.status-selector {
+    position: relative;
+    margin: 0 15px;
+}
+
+.current-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #FFD700;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px; /* Ensure enough width for "Available" */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.current-status:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-available { background-color: #2ecc71; }
+.status-busy { background-color: #f1c40f; }
+.status-absent { background-color: #e74c3c; }
+
+.status-text {
+    color: #333;
+    font-weight: 500;
+}
+
+.dropdown-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+
+.status-selector.active .dropdown-icon {
+    transform: rotate(180deg);
+}
+
+.status-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 140px; /* Match current-status width */
+    margin-top: 8px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.status-selector.active .status-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.status-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.status-option:hover {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.status-option:first-child {
+    border-radius: 12px 12px 0 0;
+}
+
+.status-option:last-child {
+    border-radius: 0 0 12px 12px;
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 16px 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(100px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 2000;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toast-message {
+    color: #333;
+    font-weight: 500;
+}

@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ professor_name }}'s Schedule - Academeet</title>
+    <link rel="stylesheet" href="{% static 'core/css/professor_dashboard.css' %}">
+</head>
+<body>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                </div>
+                <h1>Academeet</h1>
+            </div>
+            <div class="user-section">
+                <div class="profile-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                    </svg>
+                </div>
+                <span class="user-name">{{ user_name }}</span>
+                <a href="{% url 'student_dashboard' %}" class="logout-btn">Back to Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <div class="dashboard-container">
+            <div class="dashboard-title">
+                <h2>{{ professor_name }}'s Schedule</h2>
+                <p class="subtitle">Weekly availability and class schedule</p>
+            </div>
+
+            <!-- Schedule Table -->
+            <div class="schedule-wrapper">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th class="time-column">Time</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                            <th>Sunday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in grid_rows %}
+                        <tr{% if row.half_hour %} class="half-hour"{% endif %}>
+                            <td class="time-cell{% if row.bold_time %} bold-time{% endif %}">{{ row.label }}</td>
+
+                            {% for cell in row.cells %}
+                                {% if cell == 'SPAN' %}
+                                    {% comment %}This column is covered by a previous rowspan{% endcomment %}
+                                {% elif cell %}
+                                    <td class="schedule-cell
+                                        {% if cell.status == 'In Class' %}class-green
+                                        {% elif cell.status == 'Out of Work' %}class-red
+                                        {% elif cell.status == 'Available' %}class-blue
+                                        {% endif %}" rowspan="{{ cell.rowspan }}">
+                                        <div class="schedule-info">
+                                            <div class="schedule-content">
+                                                <strong>{{ cell.subject_code }}</strong><br>
+                                                <small>{{ cell.section }}</small><br>
+                                                <small>{{ cell.room }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                {% else %}
+                                    <td class="schedule-cell"></td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Back Button -->
+            <div class="action-buttons">
+                <a href="{% url 'student_dashboard' %}" class="btn btn-primary">← Back to All Professors</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

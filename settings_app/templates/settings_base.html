@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Settings{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'settings_base.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <div class="settings-container">
+        
+        <aside class="settings-nav">
+            <h2>Settings Categories</h2>
+            <ul>
+                <li>
+                    <a href="{% url 'general_settings' %}" 
+                       class="{% if request.resolver_match.url_name == 'general_settings' %}active{% endif %}">
+                       General Settings
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'admin_settings' %}"
+                       class="{% if request.resolver_match.url_name == 'admin_settings' %}active{% endif %}">
+                       Admin Settings
+                    </a>
+                </li>
+            </ul>
+            <a href="{% url 'admin_dashboard' %}" class="back-link">← Back to Dashboard</a>
+        </aside>
+
+        <main class="settings-content">
+            {% block settings_content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

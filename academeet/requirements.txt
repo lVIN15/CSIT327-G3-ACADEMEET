@@ -1,0 +1,7 @@
+Django==5.2.6
+dj-database-url
+python-dotenv
+djangorestframework
+Pillow
+
+

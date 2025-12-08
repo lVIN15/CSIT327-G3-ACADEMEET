@@ -1,0 +1,138 @@
+/* Student Registration Page Specific Styles */
+body {
+    background-color: #FFD700;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.back-button {
+    background-color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+    color: #333;
+    display: inline-block;
+}
+
+.registration-container {
+    display: flex;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.form-section {
+    flex: 1;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.branding-section {
+    flex: 1;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-section h1 {
+    color: #B30000;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.select-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.select-group select {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 15px;
+    background: #B30000;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.branding-section img {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+}
+
+.branding-section h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.branding-section p {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.role-link {
+    color: #B30000;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.role-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .registration-container {
+        flex-direction: column;
+    }
+    
+    .form-section,
+    .branding-section {
+        padding: 20px;
+    }
+
+    .select-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

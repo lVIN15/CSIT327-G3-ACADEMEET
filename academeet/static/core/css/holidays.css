@@ -1,0 +1,83 @@
+.holiday-container h3 {
+    color: #B30000;
+    margin: 0 0 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.holiday-list {
+    font-size: 0.95rem;
+}
+
+.holiday-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.holiday-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.holiday-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.holiday-date {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.holiday-desc {
+    display: block;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.loading {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.error {
+    color: #B30000;
+    background: #ffebee;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+@media (max-width: 1200px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .holiday-container {
+        width: 100%;
+        position: static;
+        max-width: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-container,
+    .holiday-container {
+        padding: 1rem;
+    }
+}

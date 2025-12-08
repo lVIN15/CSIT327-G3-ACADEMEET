@@ -1,0 +1,79 @@
+.dropdown-menu {
+    display: none;
+}
+
+.dropdown-menu.show {
+    display: block;
+    z-index: 1000; /* Much higher than table header */
+}
+
+/* Status badges */
+.status-class {
+    background: linear-gradient(135deg, #90EE90, #32CD32);
+    color: #003300;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+
+.status-out {
+    background: linear-gradient(135deg, #FFB6B6, #FF6B6B);
+    color: #8B0000;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+
+.status-available {
+    background: linear-gradient(135deg, #87CEEB, #00BFFF);
+    color: #003366;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+
+/* Make sure filter dropdowns stay on top */
+.relative {
+    position: relative;
+    z-index: 50;
+}
+
+/* Ensure table header doesn't overlap dropdowns */
+.sticky {
+    z-index: 5;
+}
+
+
+
+.settings-btn {
+    /* Layout and Sizing */
+    display: inline-flex; 
+    align-items: center;
+    padding: 0.6rem 1.5rem; 
+    border-radius: 10px;
+    margin-left: 0.5rem; 
+    
+    /* Colors and Typography */
+    background: linear-gradient(135deg, #FFD700, #FFA500); 
+    color: #800000; 
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none; 
+    
+    /* Effects */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.settings-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create a Student Account - Academeet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/student_registration.css' %}">
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'role_selection' %}" class="back-button">← Back</a>
+    
+    <div class="registration-container">
+        <!-- Left Side - Form -->
+        <div class="form-section">
+            <h1>Student Registration</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Full Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="student_id" name="student_id" placeholder="Student ID" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" class="form-control" id="contact_number" name="contact_number" placeholder="Contact Number" required>
+                </div>
+                
+                <div class="select-group">
+                    <select class="form-control" id="course" name="course" required>
+                        <option value="">Select Course</option>
+                        <option value="BSIT">BSIT - Bachelor of Science in Information Technology</option>
+                        <option value="BSCS">BSCS - Bachelor of Science in Computer Science</option>
+                    </select>
+                    <select class="form-control" id="year_level" name="year_level" required>
+                        <option value="">Select Year Level</option>
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
+                        <option value="4th Year">4th Year</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password1" name="password1" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm Password" required>
+                </div>
+
+                <button type="submit" class="register-btn">Register</button>
+            </form>
+        </div>
+
+        <!-- Right Side - Branding -->
+        <div class="branding-section">
+            <img src="{% static 'core/images/academeet-logo.png' %}" alt="Academeet Logo">
+            <h2>Create Student Account</h2>
+            <p>Join Academeet as a student</p>
+            <p>Already have an account? <a href="{% url 'role_selection' %}" class="role-link">Go to role selection</a></p>
+        </div>
+    </div>
+{% endblock %}

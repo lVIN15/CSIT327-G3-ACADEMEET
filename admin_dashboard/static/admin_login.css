@@ -1,0 +1,70 @@
+:root {
+    --maroon-dark: #800000;
+    --maroon-light: #AC0000;
+    --gold: #f5b800;
+    --input-border: #ccc;
+    --input-focus: var(--maroon-light);
+    --button-bg: var(--maroon-dark);
+    --button-hover: var(--maroon-light);
+    --bg-color: #9d2b0b;
+    --form-bg: #ffffff;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.login-container {
+    width: 350px;
+    margin: 100px auto;
+    background: linear-gradient(135deg, var(--maroon-light), var(--gold));
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    color: white;
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.login-container input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.login-container input:focus {
+    border: 2px solid var(--input-focus);
+    box-shadow: 0 0 8px rgba(172, 0, 0, 0.5);
+}
+
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.login-container button:hover {
+    background-color: var(--button-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.error-message {
+    color: #ffcccc;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}

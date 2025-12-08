@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Professor Profile</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="stylesheet" href="{% static 'profile.css' %}?v=6.0">
+</head>
+<body>
+
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-info" style="margin-left: 0; text-align: left;">
+                <span class="details-editable-hint">DETAILS ARE EDITABLE INLINE</span>
+                
+                <div class="professor-name-email">
+                    {{ professor.first_name }} {{ professor.last_name }}
+                </div>
+
+                <span class="professor-id-email-line">
+                    ID: p{{ professor.pk }} | {{ email|default:"[Email Address]" }}
+                </span>
+            </div>
+        </div>
+        
+        <div id="save-status" class="hidden"></div>
+
+        <form id="profile-form">
+            <div class="form-grid">
+                
+                <div class="form-field">
+                    <label>Full Name</label>
+                    <input type="text" value="{{ professor.full_name }}" readonly class="read-only-input">
+                </div>
+
+                <div class="form-field">
+                    <label>Email Address</label>
+                    <input type="email" value="{{ email }}" readonly class="read-only-input">
+                </div>
+
+                <div class="form-field">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="text" id="phone_number" name="phone_number" 
+                           value="{{ phone_number|default:'' }}" 
+                           data-original-value="{{ phone_number|default:'' }}">
+                    <div class="error-message" id="phone_number-error"></div>
+                </div>
+
+                <div class="form-field">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" name="department" 
+                           value="{{ department|default:'' }}" 
+                           data-original-value="{{ department|default:'' }}">
+                    <div class="error-message" id="department-error"></div>
+                </div>
+                
+                <div class="form-field" style="grid-column: 1 / -1;">
+                    <label for="office_location">Office Location</label>
+                    <input type="text" id="office_location" name="office_location" 
+                           value="{{ office_location|default:'' }}" 
+                           data-original-value="{{ office_location|default:'' }}">
+                    <div class="error-message" id="office_location-error"></div>
+                </div>
+
+            </div>
+            
+            <div class="form-actions">
+                <a href="{% url 'professor_dashboard' %}" class="back-btn">
+                    &#x2190; Back to Dashboard
+                </a>
+                <button type="button" id="save-profile-btn">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+<script>
+const PROFESSOR_ID = {{ professor_pk }};
+const API_URL = "{{ api_url }}";
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const saveStatusDiv = document.getElementById('save-status');
+const formInputs = document.querySelectorAll('#profile-form input:not([readonly])');
+
+function displayMessage(message, type) {
+    saveStatusDiv.textContent = message;
+    saveStatusDiv.className = type;
+    saveStatusDiv.classList.remove('hidden');
+    setTimeout(() => { saveStatusDiv.classList.add('hidden'); }, 5000);
+}
+
+async function saveField(fieldName, value) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF_TOKEN },
+            body: JSON.stringify({ [fieldName]: value })
+        });
+        if (response.ok) {
+            const inputElement = document.getElementById(fieldName);
+            if (inputElement) inputElement.setAttribute('data-original-value', value);
+            displayMessage('Saved successfully!', 'success');
+        } else {
+            displayMessage('Error saving field.', 'error');
+        }
+    } catch (error) { console.error(error); }
+}
+
+formInputs.forEach(input => {
+    input.addEventListener('blur', function() {
+        if (this.value !== this.getAttribute('data-original-value')) {
+            saveField(this.name, this.value);
+        }
+    });
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.blur();
+        }
+    });
+});
+
+document.getElementById('save-profile-btn').addEventListener('click', function() {
+    if (document.activeElement) document.activeElement.blur();
+});
+</script>
+</body>
+</html>
