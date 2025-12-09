@@ -164,6 +164,8 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
+# Define where static files will be collected for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [BASE_DIR / "academeet" / "static"]
 
