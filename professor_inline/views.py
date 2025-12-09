@@ -4,7 +4,8 @@ from .models import Professor
 
 @login_required 
 def professor_profile_page(request):
-    professor = get_object_or_404(Professor, user=request.user) 
+    # Create the Professor profile if it doesn't exist for the logged-in user
+    professor, created = Professor.objects.get_or_create(user=request.user) 
     
     professor_pk = professor.pk
     
