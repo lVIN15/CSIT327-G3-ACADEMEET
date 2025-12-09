@@ -3,5 +3,7 @@ dj-database-url
 python-dotenv
 djangorestframework
 Pillow
-
+whitenoise>=6.6
+gunicorn>=21.2
+psycopg[binary]>=3.2.2
 

@@ -11,13 +11,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
-
+from urllib.parse import urlparse
 # new
 import dj_database_url
 from dotenv import load_dotenv
 # Load .env only if the project explicitly allows it (prevents automatic use of a production DATABASE_URL
 # stored in .env when developing locally). Set USE_ENV_FILE=1 to enable loading the .env file.
-if os.getenv("USE_ENV_FILE", "0").lower() in ("1", "true", "yes"):
+if os.environ.get("RENDER", "") != "true":
     load_dotenv()
 
 
@@ -33,9 +33,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-2&$7vnuba3((b8kpd21!lsh5=&pjuezuib-c$(fe@9mf+w_oxd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [h.strip() for h in
+os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if
+h.strip()]
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in
+os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if
+o.strip()]
 
 
 # Application definition
@@ -62,7 +67,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
 ]
+
+# WhiteNoise: serve compressed static files
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Security (production)
+if os.environ.get("DJANGO_SECURE_SSL_REDIRECT", "True").lower() == "true":
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 ROOT_URLCONF = 'academeet.urls'
 
