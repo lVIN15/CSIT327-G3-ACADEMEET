@@ -18,7 +18,9 @@ from dotenv import load_dotenv
 # Load .env only if the project explicitly allows it (prevents automatic use of a production DATABASE_URL
 # stored in .env when developing locally). Set USE_ENV_FILE=1 to enable loading the .env file.
 if os.environ.get("RENDER", "") != "true":
-    load_dotenv()
+    # Load .env from the same directory as settings.py
+    env_path = Path(__file__).resolve().parent / '.env'
+    load_dotenv(env_path)
 
 
 
@@ -113,7 +115,7 @@ if DATABASE_URL:
             DATABASE_URL,
             conn_max_age=600,
             # Allow disabling SSL enforcement via env in dev if needed
-            ssl_require=os.getenv("DB_SSL", "False").lower() in ("1", "true", "yes"),
+            ssl_require=os.getenv("DB_SSL", "True").lower() in ("1", "true", "yes"),
         )
     }
 else:
