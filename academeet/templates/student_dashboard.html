@@ -7,11 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'core/css/student_dashboard.css' %}?v=125">
+    <link rel="stylesheet" href="{% static 'core/css/student_dashboard.css' %}?v=299"> 
+    
+    <link rel="stylesheet" href="{% static 'core/css/holidays.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/calendar.css' %}">
 </head>
 <body class="bg-gradient-to-br from-yellow-50 to-yellow-100 font-sans">
 
-    <!-- Header -->
     <header class="bg-gradient-to-r from-red-800 to-red-900 text-white p-4 flex justify-between items-center shadow-lg">
         <div class="flex items-center gap-3">
             <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
@@ -41,216 +43,250 @@
         </div>
     </header>
 
-    <!-- Content -->
     <div class="max-w-7xl mx-auto py-8 px-4">
-        <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
-            <h2 class="text-3xl font-bold text-red-900 mb-2">Student Dashboard</h2>
-            <p class="text-gray-600 mb-6">Find available professors by department, time, and day</p>
+        <div class="flex flex-col lg:flex-row gap-6">
+
+            <div class="lg:w-3/4 w-full">
+                <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+                    <h2 class="text-3xl font-bold text-red-900 mb-2">Student Dashboard</h2>
+                    <p class="text-gray-600 mb-6">Find available professors by department, time, and day</p>
+                    
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
+                        <div class="flex flex-col sm:flex-row gap-4 flex-1">
+                            <div class="relative inline-block text-left">
+                                <button id="departmentDropdownButton" class="inline-flex justify-between w-full sm:w-64 rounded-lg border-2 border-yellow-400 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-yellow-50 focus:outline-none transition">
+                                    <span id="selectedDepartment">All Departments</span>
+                                    <i class='bx bx-chevron-down text-lg'></i>
+                                </button>
+                                <div id="departmentDropdownMenu" class="dropdown-menu absolute mt-2 w-full sm:w-64 rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                    <div class="py-1">
+                                        <button data-department="All" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">All Departments</button>
+                                        <button data-department="CCS" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Computer Studies</button>
+                                        <button data-department="CMBA" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Management, Business, and Accountancy</button>
+                                        <button data-department="CCJ" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Criminal Justice</button>
+                                        <button data-department="CNAHS" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Nursing and Allied Health Sciences</button>
+                                        <button data-department="CEA" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Engineering and Architecture</button>
+                                        <button data-department="CASE" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Arts, Sciences and Education</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="relative inline-block text-left">
+                                <button id="timeDropdownButton" class="inline-flex justify-between w-full sm:w-64 rounded-lg border-2 border-yellow-400 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-yellow-50 focus:outline-none transition">
+                                    <span id="selectedTime">All Times</span>
+                                    <i class='bx bx-chevron-down text-lg'></i>
+                                </button>
+                                <div id="timeDropdownMenu" class="dropdown-menu absolute mt-2 w-full sm:w-64 rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-10 max-h-80 overflow-y-auto">
+                                    <div class="py-1">
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="all" id="allTimesCheckbox">
+                                            <span class="font-medium">All Times</span>
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="07:00">
+                                            07:00 AM - 08:00 AM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="08:00">
+                                            08:00 AM - 09:00 AM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="09:00">
+                                            09:00 AM - 10:00 AM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="10:00">
+                                            10:00 AM - 11:00 AM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="11:00">
+                                            11:00 AM - 12:00 PM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="12:00">
+                                            12:00 PM - 01:00 PM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="13:00">
+                                            01:00 PM - 02:00 PM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="14:00">
+                                            02:00 PM - 03:00 PM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="15:00">
+                                            03:00 PM - 04:00 PM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="16:00">
+                                            04:00 PM - 05:00 PM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="17:00">
+                                            05:00 PM - 06:00 PM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="18:00">
+                                            06:00 PM - 07:00 PM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="19:00">
+                                            07:00 PM - 08:00 PM
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="time-checkbox mr-2" data-time="20:00">
+                                            08:00 PM - 09:00 PM
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="relative inline-block text-left">
+                                <button id="daysDropdownButton" class="inline-flex justify-between w-full sm:w-64 rounded-lg border-2 border-yellow-400 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-yellow-50 focus:outline-none transition">
+                                    <span id="selectedDays">All Days</span>
+                                    <i class='bx bx-chevron-down text-lg'></i>
+                                </button>
+                                <div id="daysDropdownMenu" class="dropdown-menu absolute mt-2 w-full sm:w-64 rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                    <div class="py-1">
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="day-checkbox mr-2" data-day="all" id="allDaysCheckbox">
+                                            <span class="font-medium">All Days</span>
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="day-checkbox mr-2" data-day="Monday">
+                                            Monday
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="day-checkbox mr-2" data-day="Tuesday">
+                                            Tuesday
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="day-checkbox mr-2" data-day="Wednesday">
+                                            Wednesday
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="day-checkbox mr-2" data-day="Thursday">
+                                            Thursday
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="day-checkbox mr-2" data-day="Friday">
+                                            Friday
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="day-checkbox mr-2" data-day="Saturday">
+                                            Saturday
+                                        </label>
+                                        <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
+                                            <input type="checkbox" class="day-checkbox mr-2" data-day="Sunday">
+                                            Sunday
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full lg:w-80">
+                            <input type="text" id="searchInput" placeholder="Search by Subject or Professor..."
+                                    class="w-full border-2 border-yellow-400 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-red-800 focus:border-red-800 transition">
+                            <i class='bx bx-search absolute left-3 top-2.5 text-gray-500'></i>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl shadow-lg" style="max-height: 600px; overflow-y: auto;">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gradient-to-r from-red-800 to-red-900 sticky top-0 z-10">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Department</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Day</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Time</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Subject</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Section</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Room</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Professor</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduleTableBody" class="bg-white divide-y divide-gray-200">
+                                {% for schedule in schedules %}
+                                <tr class="hover:bg-yellow-50 transition cursor-pointer schedule-row"
+                                    data-department="{{ schedule.department }}"
+                                    data-day="{{ schedule.day }}"
+                                    data-time="{{ schedule.start_time|time:'H:i' }}"
+                                    data-professor-id="{{ schedule.professor.id }}"
+                                    data-search="{{ schedule.subject_name|lower }} {{ schedule.professor.get_full_name|lower }}">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ schedule.get_department_display }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.day }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.start_time|time:"g:i A" }} - {{ schedule.end_time|time:"g:i A" }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ schedule.subject_code }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.section }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.room }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.professor.get_full_name }}</td>
+                                   <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        {% if schedule.status == 'Available' %}
+                                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                {{ schedule.status }}
+                                            </span>
+                                        {% elif schedule.status == 'In Class' %}
+                                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                {{ schedule.status }}
+                                            </span>
+                                        {% else %}
+                                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                {{ schedule.status }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center text-gray-500 py-8 text-lg">No available schedules found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
             
-            <!-- Filters Section -->
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
-                <div class="flex flex-col sm:flex-row gap-4 flex-1">
-                    <!-- Department Dropdown -->
-                    <div class="relative inline-block text-left">
-                        <button id="departmentDropdownButton" class="inline-flex justify-between w-full sm:w-64 rounded-lg border-2 border-yellow-400 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-yellow-50 focus:outline-none transition">
-                            <span id="selectedDepartment">All Departments</span>
-                            <i class='bx bx-chevron-down text-lg'></i>
-                        </button>
-                        <div id="departmentDropdownMenu" class="dropdown-menu absolute mt-2 w-full sm:w-64 rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                            <div class="py-1">
-                                <button data-department="All" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">All Departments</button>
-                                <button data-department="CCS" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Computer Studies</button>
-                                <button data-department="CMBA" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Management, Business, and Accountancy</button>
-                                <button data-department="CCJ" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Criminal Justice</button>
-                                <button data-department="CNAHS" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Nursing and Allied Health Sciences</button>
-                                <button data-department="CEA" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Engineering and Architecture</button>
-                                <button data-department="CASE" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition">College of Arts, Sciences and Education</button>
-                            </div>
+            <div class="lg:w-1/4 w-full">
+                <div class="bg-white rounded-2xl shadow-xl p-4 sticky top-8" style="width: 332px;">
+                    <h3 class="text-xl font-bold text-red-900 mb-4 flex items-center gap-2">
+                        <i class='bx bx-calendar-event text-2xl'></i> Academic Calendar
+                    </h3>
+                    
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button id="prevMonth">◀</button>
+                            <span id="monthYear">October 2025</span>
+                            <button id="nextMonth">▶</button>
                         </div>
-                    </div>
 
-                    <!-- Time Dropdown -->
-                    <div class="relative inline-block text-left">
-                        <button id="timeDropdownButton" class="inline-flex justify-between w-full sm:w-64 rounded-lg border-2 border-yellow-400 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-yellow-50 focus:outline-none transition">
-                            <span id="selectedTime">All Times</span>
-                            <i class='bx bx-chevron-down text-lg'></i>
-                        </button>
-                        <div id="timeDropdownMenu" class="dropdown-menu absolute mt-2 w-full sm:w-64 rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-10 max-h-80 overflow-y-auto">
-                            <div class="py-1">
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="all" id="allTimesCheckbox">
-                                    <span class="font-medium">All Times</span>
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="07:00">
-                                    07:00 AM - 08:00 AM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="08:00">
-                                    08:00 AM - 09:00 AM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="09:00">
-                                    09:00 AM - 10:00 AM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="10:00">
-                                    10:00 AM - 11:00 AM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="11:00">
-                                    11:00 AM - 12:00 PM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="12:00">
-                                    12:00 PM - 01:00 PM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="13:00">
-                                    01:00 PM - 02:00 PM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="14:00">
-                                    02:00 PM - 03:00 PM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="15:00">
-                                    03:00 PM - 04:00 PM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="16:00">
-                                    04:00 PM - 05:00 PM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="17:00">
-                                    05:00 PM - 06:00 PM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="18:00">
-                                    06:00 PM - 07:00 PM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="19:00">
-                                    07:00 PM - 08:00 PM
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="time-checkbox mr-2" data-time="20:00">
-                                    08:00 PM - 09:00 PM
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                        <table class="calendar-table">
+                            <thead>
+                                <tr>
+                                    <th>Sun</th>
+                                    <th>Mon</th>
+                                    <th>Tue</th>
+                                    <th>Wed</th>
+                                    <th>Thu</th>
+                                    <th>Fri</th>
+                                    <th>Sat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calendarBody">
+                                </tbody>
+                        </table>
 
-                    <!-- Days Dropdown -->
-                    <div class="relative inline-block text-left">
-                        <button id="daysDropdownButton" class="inline-flex justify-between w-full sm:w-64 rounded-lg border-2 border-yellow-400 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-yellow-50 focus:outline-none transition">
-                            <span id="selectedDays">All Days</span>
-                            <i class='bx bx-chevron-down text-lg'></i>
-                        </button>
-                        <div id="daysDropdownMenu" class="dropdown-menu absolute mt-2 w-full sm:w-64 rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                            <div class="py-1">
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="day-checkbox mr-2" data-day="all" id="allDaysCheckbox">
-                                    <span class="font-medium">All Days</span>
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="day-checkbox mr-2" data-day="Monday">
-                                    Monday
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="day-checkbox mr-2" data-day="Tuesday">
-                                    Tuesday
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="day-checkbox mr-2" data-day="Wednesday">
-                                    Wednesday
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="day-checkbox mr-2" data-day="Thursday">
-                                    Thursday
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="day-checkbox mr-2" data-day="Friday">
-                                    Friday
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="day-checkbox mr-2" data-day="Saturday">
-                                    Saturday
-                                </label>
-                                <label class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 transition cursor-pointer">
-                                    <input type="checkbox" class="day-checkbox mr-2" data-day="Sunday">
-                                    Sunday
-                                </label>
-                            </div>
-                        </div>
+                        <div id="holidayTooltip" class="holiday-tooltip"></div>
                     </div>
                 </div>
-
-                <!-- Search Bar -->
-                <div class="relative w-full lg:w-80">
-                    <input type="text" id="searchInput" placeholder="Search by Subject or Professor..."
-                           class="w-full border-2 border-yellow-400 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-red-800 focus:border-red-800 transition">
-                    <i class='bx bx-search absolute left-3 top-2.5 text-gray-500'></i>
-                </div>
             </div>
-
-            <!-- Schedule Table -->
-            <div class="overflow-x-auto rounded-xl shadow-lg" style="max-height: 600px; overflow-y: auto;">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gradient-to-r from-red-800 to-red-900 sticky top-0 z-10">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Department</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Day</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Time</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Subject</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Section</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Room</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Professor</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="scheduleTableBody" class="bg-white divide-y divide-gray-200">
-                        {% for schedule in schedules %}
-                        <tr class="hover:bg-yellow-50 transition cursor-pointer schedule-row"
-                            data-department="{{ schedule.department }}"
-                            data-day="{{ schedule.day }}"
-                            data-time="{{ schedule.start_time|time:'H:i' }}"
-                            data-professor-id="{{ schedule.professor.id }}"
-                            data-search="{{ schedule.subject_name|lower }} {{ schedule.professor.get_full_name|lower }}">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ schedule.get_department_display }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.day }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.start_time|time:"g:i A" }} - {{ schedule.end_time|time:"g:i A" }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ schedule.subject_code }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.section }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.room }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ schedule.professor.get_full_name }}</td>
-                           <td class="px-6 py-4 whitespace-nowrap text-sm">
-    {% if schedule.status == 'Available' %}
-        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-            {{ schedule.status }}
-        </span>
-    {% elif schedule.status == 'In Class' %}
-        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-            {{ schedule.status }}
-        </span>
-    {% else %}
-        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-            {{ schedule.status }}
-        </span>
-    {% endif %}
-</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center text-gray-500 py-8 text-lg">No available schedules found.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            
         </div>
     </div>
 
+    <script src="{% static 'core/js/calendar.js' %}"></script>
     <script src="{% static 'core/js/student_dashboard.js' %}"></script>
 </body>
 </html>

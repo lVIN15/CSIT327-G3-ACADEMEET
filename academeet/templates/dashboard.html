@@ -1,13 +1,141 @@
+{% extends 'base.html' %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard - Academeet</title>
-</head>
-<body>
-    <h2>Welcome to your Dashboard, {{ user.username }}!</h2>
-    <p>You are now logged in.</p>
-</body>
-</html>
+{% block content %}
+<div style="display:flex; gap:24px; align-items:flex-start;">
+    <!-- Left: Calendar (fixed width) -->
+    <aside style="width:320px; background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <button id="prevMonth" class="btn">&lt;</button>
+            <h3 id="monthYear" style="margin:0;">Month Year</h3>
+            <button id="nextMonth" class="btn">&gt;</button>
+        </div>
+
+        <div id="calendar" style="width:100%;">
+            <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:8px; color:#555; font-weight:600; text-align:center;">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+            <div id="days" style="display:grid; grid-template-columns:repeat(7,1fr); gap:6px;">
+                <!-- JS renders days here -->
+            </div>
+        </div>
+
+        <div style="margin-top:12px; font-size:13px; color:#444;">
+            <strong>Legend:</strong>
+            <div><span style="display:inline-block;width:10px;height:10px;background:#ffdddd;border-radius:2px;margin-right:6px;"></span> Holiday</div>
+            <div><span style="display:inline-block;width:10px;height:10px;background:#e6f7ff;border-radius:2px;margin-right:6px;"></span> Today</div>
+        </div>
+    </aside>
+
+    <!-- Right: Main dashboard content -->
+    <main style="flex:1;">
+        <h2>Welcome, {{ user.get_full_name|default:user.username }}!</h2>
+        <p>Quick overview of your account and upcoming events.</p>
+
+        <!-- Example cards / content -->
+        <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:12px;">
+            <div style="background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:8px;">Main dashboard content card 1</div>
+            <div style="background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:8px;">Main dashboard content card 2</div>
+            <div style="background:#fff;border:1px solid #e0e0e0;padding:12px;border-radius:8px;">Main dashboard content card 3</div>
+        </section>
+    </main>
+</div>
+
+<!-- Pass holidays as JSON to JS. Expect `holidays` in context as list of objects with `name` and `date` (ISO) -->
+{% block extra_scripts %}
+<script>
+    (function(){
+        // Config / data from Django
+        const holidays = {{ holidays|default:'[]'|safe }};
+        const today = new Date();
+
+        // Initialize with provided month/year or today
+        let activeYear = {{ current_year|default:today.year }};
+        let activeMonth = {{ current_month|default:today.month }} - 1; // JS months 0-11
+
+        const monthYearEl = document.getElementById('monthYear');
+        const daysEl = document.getElementById('days');
+        const prevBtn = document.getElementById('prevMonth');
+        const nextBtn = document.getElementById('nextMonth');
+
+        function renderCalendar(year, month){
+            monthYearEl.textContent = new Date(year, month).toLocaleString(undefined, { month: 'long', year: 'numeric' });
+            daysEl.innerHTML = '';
+
+            const firstDay = new Date(year, month, 1);
+            const startDay = firstDay.getDay();
+            const daysInMonth = new Date(year, month+1, 0).getDate();
+
+            // blank cells for previous month
+            for(let i=0;i<startDay;i++){
+                const blank = document.createElement('div');
+                blank.style.opacity = '0.35';
+                daysEl.appendChild(blank);
+            }
+
+            for(let d=1; d<=daysInMonth; d++){
+                const cell = document.createElement('div');
+                cell.style.padding = '8px';
+                cell.style.minHeight = '60px';
+                cell.style.borderRadius = '6px';
+                cell.style.background = '#fafafa';
+                cell.style.fontSize = '13px';
+                cell.style.boxSizing = 'border-box';
+
+                const dateObj = new Date(year, month, d);
+                const iso = dateObj.toISOString().slice(0,10);
+
+                const header = document.createElement('div');
+                header.textContent = d;
+                header.style.fontWeight = '600';
+                header.style.marginBottom = '6px';
+                cell.appendChild(header);
+
+                // Mark today
+                const isToday = (new Date().toISOString().slice(0,10) === iso);
+                if(isToday){
+                    cell.style.background = '#e6f7ff';
+                }
+
+                // Mark holidays
+                const holiday = holidays.find(h => h.date === iso);
+                if(holiday){
+                    const hdiv = document.createElement('div');
+                    hdiv.textContent = holiday.name;
+                    hdiv.style.fontSize = '12px';
+                    hdiv.style.marginTop = '6px';
+                    hdiv.style.background = '#ffdddd';
+                    hdiv.style.padding = '4px';
+                    hdiv.style.borderRadius = '4px';
+                    cell.appendChild(hdiv);
+                }
+
+                daysEl.appendChild(cell);
+            }
+        }
+
+        prevBtn.addEventListener('click', ()=>{
+            activeMonth -= 1;
+            if(activeMonth < 0){ activeMonth = 11; activeYear -= 1; }
+            renderCalendar(activeYear, activeMonth);
+        });
+
+        nextBtn.addEventListener('click', ()=>{
+            activeMonth += 1;
+            if(activeMonth > 11){ activeMonth = 0; activeYear += 1; }
+            renderCalendar(activeYear, activeMonth);
+        });
+
+        // Initial render
+        renderCalendar(activeYear, activeMonth);
+    })();
+</script>
+{% endblock %}
+
+{% endblock %}

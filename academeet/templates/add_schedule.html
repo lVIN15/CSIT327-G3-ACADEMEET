@@ -12,7 +12,6 @@
     <div class="bg-shape"></div>
     <div class="bg-shape"></div>
 
-    <!-- Header -->
     <header class="dashboard-header">
         <div class="header-content">
             <div class="logo-section">
@@ -36,9 +35,8 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <div class="form-container">
+        <div class="form-container" style="min-width: 950px;">
             <div class="page-title">
                 <h2>Add Schedules</h2>
                 <a href="{% url 'professor_dashboard' %}" class="back-link">← Back to Dashboard</a>
@@ -48,7 +46,6 @@
                 {% csrf_token %}
                 
                 <div id="scheduleEntries">
-                    <!-- Schedule Entry 1 -->
                     <div class="schedule-entry">
                         <div class="entry-header">
                             <h3>Schedule Entry</h3>
@@ -130,8 +127,8 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="status">Status</label>
-                                <select name="status[]" required>
+                                <label for="status" style="margin-left: 30px;">Status</label>
+                                <select name="status[]" required style="margin-left: 25px;">
                                     <option value="">Select Status</option>
                                     <option value="Class">Class</option>
                                     <option value="Out of work">Out of work</option>
@@ -139,10 +136,9 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Add Another Schedule Button -->
                 <button type="button" class="add-another-btn" onclick="addScheduleEntry()">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -150,12 +146,118 @@
                     Add another schedule
                 </button>
 
-                <!-- Save Button -->
                 <button type="submit" class="save-btn">Save Schedules</button>
             </form>
         </div>
     </main>
 
+    <script>
+        const SCHEDULE_ENTRY_TEMPLATE = `
+            <div class="schedule-entry">
+                <div class="entry-header">
+                    <h3>Schedule Entry</h3>
+                    <button type="button" class="remove-btn" onclick="removeSchedule(this)">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select name="department[]" required>
+                            <option value="">Select Department</option>
+                            <option value="CCS">College of Computer Studies</option>
+                            <option value="CMBA">College of Management, Business, and Accountancy</option>
+                            <option value="CCJ">College of Criminal Justice</option>
+                            <option value="CNAHS">College of Nursing and Allied Health Sciences</option>
+                            <option value="CEA">College of Engineering and Architecture</option>
+                            <option value="CASE">College of Arts, Sciences and Education</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="subject_code">Subject Code</label>
+                        <input type="text" name="subject_code[]" placeholder="e.g. CSIT104" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject_name">Subject Name</label>
+                        <input type="text" name="subject_name[]" placeholder="e.g. Programming Fundamentals" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="section">Section</label>
+                        <input type="text" name="section[]" placeholder="e.g. G7-AP4" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="room">Room</label>
+                        <input type="text" name="room[]" placeholder="e.g. RTL223" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="year_level">Year Level</label>
+                        <select name="year_level[]" required>
+                            <option value="">Select Year Level</option>
+                            <option value="1st">1st Year</option>
+                            <option value="2nd">2nd Year</option>
+                            <option value="3rd">3rd Year</option>
+                            <option value="4th">4th Year</option>
+                            <option value="5th">5th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="day">Day</label>
+                        <select name="day[]" required>
+                            <option value="">Select Day</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Slot</label>
+                        <div class="time-slot-group">
+                            <input type="time" name="time_from[]" placeholder="From" required>
+                            <span class="time-separator">to</span>
+                            <input type="time" name="time_to[]" placeholder="To" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select name="status[]" required>
+                            <option value="">Select Status</option>
+                            <option value="Class">Class</option>
+                            <option value="Out of work">Out of work</option>
+                            <option value="Available">Available</option>
+                        </select>
+                    </div>
+                </div>
+                </div>
+        `;
+
+        function addScheduleEntry() {
+            const container = document.getElementById('scheduleEntries');
+            container.insertAdjacentHTML('beforeend', SCHEDULE_ENTRY_TEMPLATE);
+        }
+
+        function removeSchedule(button) {
+            const entry = button.closest('.schedule-entry');
+            if (entry) {
+                entry.remove();
+            }
+        }
+    </script>
     <script src="{% static 'core/js/add_schedule.js' %}"></script>
     
 </body>
