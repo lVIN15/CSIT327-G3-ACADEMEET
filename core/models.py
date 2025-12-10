@@ -114,3 +114,14 @@ class StudentProfile(models.Model):
     @property
     def full_name(self):
         return f"{self.user.first_name} {self.user.last_name}"
+
+
+class Holiday(models.Model):
+    name = models.CharField(max_length=200)
+    date = models.DateField()
+
+    class Meta:
+        ordering = ['date']
+
+    def __str__(self):
+        return f"{self.name} ({self.date})"

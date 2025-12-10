@@ -57,7 +57,14 @@
 
         <!-- Right Side - Branding -->
         <div class="branding-section">
-            <img src="{% static 'core/images/academeet-logo.png' %}" alt="Academeet Logo">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                </div>
+            </div>
             <h2>Create Student Account</h2>
             <p>Join Academeet as a student</p>
             <p>Already have an account? <a href="{% url 'role_selection' %}" class="role-link">Go to role selection</a></p>

@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from pathlib import Path
 from urllib.parse import urlparse
 # new
@@ -182,23 +184,17 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
 
+# Anymail/Brevo API email configuration
+from dotenv import load_dotenv
+load_dotenv()
 
-# Email configuration: prefer environment variables for production; fall back to Gmail SMTP for debugging
-import os
- 
-# Default to the console backend for development so emails are printed to the runserver console.
-# You can override via environment variables for production to use SMTP.
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-# Optional SMTP settings (only used if EMAIL_BACKEND is set to the SMTP backend via env)
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ('1', 'true', 'yes')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'academeet.25@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'ujvnxjjazezhlllw')
-# Use the Gmail account as the default sender to avoid DMARC/SPF issues
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+INSTALLED_APPS += ["anymail"]
 
-
+EMAIL_BACKEND = "anymail.backends.brevo.EmailBackend"
+ANYMAIL = {
+    "BREVO_API_KEY": os.environ.get("BREVO_API_KEY"),
+}
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'academeet.25@gmail.com')
 
 # ----------------------------------------------------
 # 👇 NEW: MEDIA FILE CONFIGURATION (CRITICAL)
