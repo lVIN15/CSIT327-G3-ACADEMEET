@@ -9,8 +9,8 @@ if os.getenv("USE_ENV_FILE", "0").lower() in ("1", "true", "yes"):
     load_dotenv(env_path)
 
 # Read credentials from environment variables
-SUPABASE_URL = os.getenv("https://imbbllwwyungzmanpwra.supabase.co")
-SUPABASE_KEY = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltYmJsbHd3eXVuZ3ptYW5wd3JhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0MTMwNzEsImV4cCI6MjA3Njk4OTA3MX0.OlctzzKxgasDSIAtBHNkbSSGt-0Z-XZ20eu3YDH-Pqs")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 _supabase_client: Optional[object] = None
 
